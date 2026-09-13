@@ -1,10 +1,21 @@
 ---
+/** Decorative horizontal separator with optimized leaves artwork. */
+import { Image } from "astro:assets";
 import imageLeaves from "../assets/abstract/leaves-1.png";
 ---
 
-<div class="separator" style={`--image-leaves: url(${imageLeaves.src})`}>
+<div class="separator">
   <hr>
-  <span class="middle"></span>
+  <Image
+    alt=""
+    aria-hidden="true"
+    class="middle"
+    height={16}
+    layout="constrained"
+    loading="lazy"
+    src={imageLeaves}
+    width={16}
+  />
   <hr>
 </div>
 
@@ -21,14 +32,11 @@ import imageLeaves from "../assets/abstract/leaves-1.png";
       width: 40%;
       margin: 1rem 0;
     }
-    span {
+    .middle {
       /* border: 2px dotted; */
       width: 1rem;
       height: 1rem;
       margin: 0 1rem;
-      background-image: var(--image-leaves);
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
     }
   }
 </style>

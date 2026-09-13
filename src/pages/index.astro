@@ -13,18 +13,23 @@ import Layout from "../layouts/layout.astro";
   <div
     class="hero-container"
     style={`
-      --image-hero-background: url(${imageHeroBackground.src});
       --image-profile-pic: url(${imageProfilePic.src});
-      --image-hero-background-width: ${imageHeroBackground.width}px;
     `}
   >
+    <Image
+      alt=""
+      aria-hidden="true"
+      class="hero-background"
+      layout="constrained"
+      loading="eager"
+      src={imageHeroBackground}
+    />
     <section class="hero">
       <Image
         alt={data.author.name}
         class="hero-profile"
-        sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, 480px"
+        layout="constrained"
         src={imageProfilePic}
-        widths={[360, 480, 720, 1086]}
       />
       <div class="hero-intro">
         <header class="hero-header">
@@ -81,22 +86,22 @@ import Layout from "../layouts/layout.astro";
       border-radius: var(--border-radius);
     }
     position: relative;
-    &::before {
-      content: '';
+  }
+
+  .hero-background {
       z-index: -1;
       position: absolute;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background-image: var(--image-hero-background);
+      object-fit: cover;
       // filter: brightness(0.65) saturate(0.45) blur(3px);
       @media (prefers-color-scheme: dark) {
         filter: invert(1) brightness(0.65) saturate(0.45) blur(3px);
         filter: invert(1);
         // filter: invert(1) brightness(1.65) saturate(0.45) blur(3px);
       }
-    }
   }
 
   .hero {

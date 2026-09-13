@@ -58,9 +58,8 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
             {book.cover ? (
               <Image
                 alt={`Cover of ${book.title}`}
-                sizes="(max-width: 768px) 90vw, 320px"
+                layout="constrained"
                 src={book.cover}
-                widths={[320, 640]}
               />
             ) : (
               <div aria-label={`Cover unavailable for ${book.title}`} class="missing-cover" role="img">
@@ -143,9 +142,8 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
                     {recommendation.cover ? (
                       <Image
                         alt={`Cover of ${recommendation.title}`}
-                        sizes="160px"
+                        layout="constrained"
                         src={recommendation.cover}
-                        widths={[160, 320]}
                       />
                     ) : (
                       <span class="recommendation-missing-cover">Cover unavailable</span>

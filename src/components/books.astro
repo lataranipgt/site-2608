@@ -19,9 +19,8 @@ type BookDisplay = "full" | "short";
             <div class="cover image">
               <Image
                 alt={`${title} Cover`}
-                sizes="222px"
+                layout="constrained"
                 src={cover}
-                widths={[222, 444]}
               />
             </div>
             <span class="title">{title}</span>

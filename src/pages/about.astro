@@ -39,10 +39,9 @@ const milestoneImages = [
         <Image
           alt={about.portraitAlt}
           class="about-portrait-image"
+          layout="constrained"
           loading="eager"
-          sizes="(max-width: 768px) 90vw, 545px"
           src={imageProfilePic}
-          widths={[360, 545, 720, 1086]}
         />
       </div>
 
@@ -60,6 +59,7 @@ const milestoneImages = [
                 alt={`${highlight.title} icon`}
                 class="icon-placeholder"
                 height={64}
+                layout="constrained"
                 src={highlightImages[index]}
                 width={64} />
               <div>
@@ -78,18 +78,16 @@ const milestoneImages = [
           <Image
             alt={about.decorativeImages.quote.alt}
             class="wide-placeholder"
-            sizes="100vw"
+            layout="constrained"
             src={imageQuoteLight}
-            widths={[600, 1100, 2172]}
           />
         </div>
         <div class="theme-dark">
           <Image
             alt={about.decorativeImages.quote.alt}
             class="wide-placeholder"
-            sizes="100vw"
+            layout="constrained"
             src={imageQuoteDark}
-            widths={[600, 1100, 1951]}
           />
         </div>
       </div>
@@ -113,6 +111,7 @@ const milestoneImages = [
               alt={`${milestone.title} icon`}
               class="icon-placeholder"
               height={72}
+              layout="constrained"
               src={milestoneImages[index]}
               width={72} />
             <div>
@@ -128,18 +127,16 @@ const milestoneImages = [
           <Image
             alt={about.decorativeImages.journey.alt}
             class="journey-placeholder"
-            sizes="(max-width: 768px) 7rem, 8rem"
+            layout="constrained"
             src={imageJourneyLight}
-            widths={[180, 360, 720, 1134]}
           />
         </div>
         <div class="theme-dark">
           <Image
             alt={about.decorativeImages.journey.alt}
             class="journey-placeholder"
-            sizes="(max-width: 768px) 7rem, 8rem"
+            layout="constrained"
             src={imageJourneyDark}
-            widths={[180, 360, 720, 1134]}
           />
         </div>
       </div>

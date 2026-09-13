@@ -42,14 +42,23 @@ const socials = [
 ].filter(({ url }) => url);
 ---
 
-<footer
-  class="footer"
-  style={`
-    --footer-bg: url(${footerBg.src});
-    --footer-bg-dark: url(${footerBgDark.src});
-  `}
->
-  <div aria-hidden="true" class="footer-bg" />
+<footer class="footer">
+  <Image
+    alt=""
+    aria-hidden="true"
+    class="footer-bg footer-bg-light"
+    layout="constrained"
+    loading="lazy"
+    src={footerBg}
+  />
+  <Image
+    alt=""
+    aria-hidden="true"
+    class="footer-bg footer-bg-dark"
+    layout="constrained"
+    loading="lazy"
+    src={footerBgDark}
+  />
 
   <div class="footer-inner">
     <div class="footer-brand">
@@ -73,7 +82,7 @@ const socials = [
         {socials.map(({ image, name, url }) => (
           <li>
             <a href={url} rel="noopener noreferrer" target="_blank" title={name}>
-              <Image alt={`Follow Lata Thakur on ${name}`} height="36" loading="lazy" src={image} width="36" />
+              <Image alt={`Follow Lata Thakur on ${name}`} height="36" layout="constrained" loading="lazy" src={image} width="36" />
             </a>
           </li>
         ))}
@@ -99,17 +108,25 @@ const socials = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: var(--footer-bg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: bottom center;
+    object-fit: cover;
+    object-position: bottom center;
     opacity: 0.15;
     @media (prefers-color-scheme: light) {
       filter: brightness(120%);
     }
-    @media (prefers-color-scheme: dark) {
-      background-image: var(--footer-bg-dark);
-      opacity: 0.15;
+  }
+
+  .footer-bg-dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .footer-bg-light {
+      display: none;
+    }
+
+    .footer-bg-dark {
+      display: block;
     }
   }
 

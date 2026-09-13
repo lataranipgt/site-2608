@@ -54,19 +54,25 @@ const { pathname } = Astro.url;
   <body
     style={`
     --sprite: url(${imageSprite.src});
-    --image-noise: url(${imageNoise.src});
   `}
   >
+    <Image
+      alt=""
+      aria-hidden="true"
+      class="noise-background"
+      layout="constrained"
+      loading="eager"
+      src={imageNoise}
+    />
     <div class="main-container">
       <header class="header">
         <div class="header-name">
           <a href="/">
             <Image
               alt={data.author.name}
-              sizes="160px"
+              layout="constrained"
               src={imageName}
               title={data.author.name}
-              widths={[160, 320]}
             />
           </a>
         </div>
@@ -101,16 +107,14 @@ const { pathname } = Astro.url;
     /* overflow-x: hidden; */
   }
 
-  body::before {
+  .noise-background {
     position: fixed;
     top: 0;
     left: 0;
     z-index: -10;
     width: 100%;
     height: 100%;
-    content: '';
-    background: var(--image-noise);
-    background-size: cover;
+    object-fit: cover;
     mix-blend-mode: multiply;
     opacity: 0.09;
     @media (prefers-color-scheme: dark) {
