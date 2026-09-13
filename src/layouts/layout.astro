@@ -26,6 +26,7 @@ interface Props {
 const { pathname } = Astro.url;
 const siteTitle = data.author.name;
 const siteDescription = data.author.description.short;
+const googleAnalyticsId = data.googleAnalytics.measurementId;
 const socialImageUrl = new URL(imageProfilePic.src, Astro.site ?? Astro.url);
 const { seo = { description: siteDescription, title: siteTitle } } =
   Astro.props;
@@ -78,6 +79,19 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <meta content="summary_large_image" name="twitter:card">
     <meta content={socialImageUrl} name="twitter:image">
     <title>{seo.title}</title>
+    <script
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+      is:inline
+    ></script>
+    <script define:vars={{ googleAnalyticsId }} is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args) {
+        window.dataLayer.push(args);
+      }
+      gtag("js", new Date());
+      gtag("config", googleAnalyticsId);
+    </script>
   </head>
   <body
     style={`

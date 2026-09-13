@@ -433,4 +433,7 @@ export const data = {
       title: "Jinse Guzarish Thi Zindagi Ki",
     },
   ],
+  googleAnalytics: {
+    measurementId: "G-LG73Z1ETSY",
+  },
 };
