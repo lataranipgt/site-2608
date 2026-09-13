@@ -43,9 +43,13 @@ export function getStaticPaths() {
 const { book, pages } = Astro.props as PreviewRouteProps;
 const pageSources = pages.map((page) => page.image.src);
 const pageCount = pages.length;
+const seo = {
+  description: `${book.description.replace(/\s+/g, " ").trim().slice(0, 240)} Preview pages from this ${book.language} ${book.genre} book by ${data.author.name}${book.isbn ? `, ISBN ${book.isbn}` : ""}${book.publisher ? `, published by ${book.publisher}` : ""}${book.publicationDate ? ` in ${book.publicationDate}` : ""}.`,
+  title: `${book.title} Preview — ${data.author.name}`,
+};
 ---
 
-<Layout>
+<Layout seo={seo}>
   <main class="book-preview">
     <a class="back-link" href={`/books/${book.slug}`}>← Back to {book.title}</a>
 

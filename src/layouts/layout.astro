@@ -13,10 +13,23 @@ import Footer from "../components/footer.astro";
 import { data } from "../data.mjs";
 import "../global.scss";
 
+interface SeoMetadata {
+  description: string;
+  ogType?: "article" | "book" | "website";
+  title: string;
+}
+
+interface Props {
+  seo?: SeoMetadata;
+}
+
 const { pathname } = Astro.url;
 const siteTitle = data.author.name;
 const siteDescription = data.author.description.short;
 const socialImageUrl = new URL(imageProfilePic.src, Astro.site ?? Astro.url);
+const { seo = { description: siteDescription, title: siteTitle } } =
+  Astro.props;
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 ---
 
 <!doctype html>
@@ -53,17 +66,18 @@ const socialImageUrl = new URL(imageProfilePic.src, Astro.site ?? Astro.url);
       type="image/png"
     >
     <meta content={Astro.generator} name="generator">
-    <meta content={siteDescription} name="description">
-    <meta content={siteTitle} property="og:title">
-    <meta content={siteDescription} property="og:description">
-    <meta content="website" property="og:type">
+    <meta content={seo.description} name="description">
+    <meta content={seo.title} property="og:title">
+    <meta content={seo.description} property="og:description">
+    <meta content={seo.ogType ?? "website"} property="og:type">
+    <meta content={pageUrl} property="og:url">
     <meta content={socialImageUrl} property="og:image">
     <meta content={data.author.about.portraitAlt} property="og:image:alt">
-    <meta content={siteTitle} name="twitter:title">
-    <meta content={siteDescription} name="twitter:description">
+    <meta content={seo.title} name="twitter:title">
+    <meta content={seo.description} name="twitter:description">
     <meta content="summary_large_image" name="twitter:card">
     <meta content={socialImageUrl} name="twitter:image">
-    <title>{siteTitle}</title>
+    <title>{seo.title}</title>
   </head>
   <body
     style={`

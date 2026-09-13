@@ -48,9 +48,14 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
   tel: "tel",
   text: "text",
 };
+const seo = {
+  description:
+    "Contact Lata Thakur about her Hindi books, poetry, literary events, school visits, speaking engagements, interviews, and publishing opportunities.",
+  title: "Contact Lata Thakur",
+};
 ---
 
-<Layout>
+<Layout seo={seo}>
   <main class="contact-page">
     <section class="contact-hero">
       <picture>

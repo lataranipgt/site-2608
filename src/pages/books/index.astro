@@ -1,9 +1,17 @@
 ---
+/** Lists Lata Thakur's published books. */
+
 import Books from "../../components/books.astro";
+import { data } from "../../data.mjs";
 import Layout from "../../layouts/layout.astro";
+
+const seo = {
+  description: `Explore books by ${data.author.name}, including Hindi poetry collections and fiction with stories and reflections drawn from life.`,
+  title: "Books by Lata Thakur — Hindi Poetry and Fiction",
+};
 ---
 
-<Layout>
+<Layout seo={seo}>
   <div class="books"><Books display="full" /></div>
 </Layout>
 

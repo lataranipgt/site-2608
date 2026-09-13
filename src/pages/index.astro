@@ -7,9 +7,14 @@ import Books from "../components/books.astro";
 import Separator from "../components/separator.astro";
 import { data } from "../data.mjs";
 import Layout from "../layouts/layout.astro";
+
+const seo = {
+  description: data.author.description.short,
+  title: "Lata Thakur — Hindi Author, Poet & Retired Teacher",
+};
 ---
 
-<Layout>
+<Layout seo={seo}>
   <div
     class="hero-container"
     style={`

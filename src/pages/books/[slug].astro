@@ -45,9 +45,27 @@ const hasLongDescription = description.length > 300;
 const descriptionPreview = description.slice(0, 300);
 const descriptionParagraphs = description.split("\n").filter(Boolean);
 const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
+const bookFacts = book
+  ? [
+      book.genre,
+      `${book.language} language`,
+      book.isbn && `ISBN ${book.isbn}`,
+      book.publisher && `published by ${book.publisher}`,
+      book.publicationDate && `published ${book.publicationDate}`,
+    ]
+      .filter(Boolean)
+      .join(", ")
+  : "";
+const seo = book
+  ? {
+      description: `${description.replace(/\s+/g, " ").trim().slice(0, 240)} ${bookFacts}.`,
+      ogType: "book" as const,
+      title: `${book.title} by ${data.author.name} — ${book.genre}`,
+    }
+  : undefined;
 ---
 
-<Layout>
+<Layout seo={seo}>
   <main class="book-page">
     <a class="back-link" href="/books">← Back to Books</a>
 
