@@ -1,5 +1,6 @@
 ---
 /** Renders Lata Thakur's biography and writing journey. */
+import { Image } from "astro:assets";
 import imageAuthor from "../assets/abstract/about-author.png";
 import imageEducator from "../assets/abstract/about-educator.png";
 import imageJourneyLight from "../assets/abstract/about-journey.png";
@@ -35,13 +36,14 @@ const milestoneImages = [
   <main class="about-page">
     <section class="about-introduction">
       <div class="about-portrait">
-        <img
+        <Image
           alt={about.portraitAlt}
-          height={720}
+          class="about-portrait-image"
           loading="eager"
-          src={imageProfilePic.src}
-          width={545}
-        >
+          sizes="(max-width: 768px) 90vw, 545px"
+          src={imageProfilePic}
+          widths={[360, 545, 720, 1086]}
+        />
       </div>
 
       <div class="about-copy">
@@ -54,11 +56,11 @@ const milestoneImages = [
         <ul class="highlights">
           {about.highlights.map((highlight, index) => (
             <li>
-              <img
+              <Image
                 alt={`${highlight.title} icon`}
                 class="icon-placeholder"
                 height={64}
-                src={highlightImages[index].src}
+                src={highlightImages[index]}
                 width={64} />
               <div>
                 <h2>{highlight.title}</h2>
@@ -71,19 +73,26 @@ const milestoneImages = [
     </section>
 
     <section class="about-quote">
-      <picture>
-        <source
-          media="(prefers-color-scheme: dark)"
-          srcset={imageQuoteDark.src}
-        >
-        <img
-          alt={about.decorativeImages.quote.alt}
-          class="wide-placeholder"
-          height={imageQuoteLight.height}
-          src={imageQuoteLight.src}
-          width={imageQuoteLight.width}
-        >
-      </picture>
+      <div class="about-quote-image">
+        <div class="theme-light">
+          <Image
+            alt={about.decorativeImages.quote.alt}
+            class="wide-placeholder"
+            sizes="100vw"
+            src={imageQuoteLight}
+            widths={[600, 1100, 2172]}
+          />
+        </div>
+        <div class="theme-dark">
+          <Image
+            alt={about.decorativeImages.quote.alt}
+            class="wide-placeholder"
+            sizes="100vw"
+            src={imageQuoteDark}
+            widths={[600, 1100, 1951]}
+          />
+        </div>
+      </div>
       <blockquote>
         <p>“{about.quote.text}”</p>
         <footer>— {about.quote.attribution}</footer>
@@ -100,11 +109,11 @@ const milestoneImages = [
       <ol class="milestones">
         {about.journey.milestones.map((milestone, index) => (
           <li>
-            <img
+            <Image
               alt={`${milestone.title} icon`}
               class="icon-placeholder"
               height={72}
-              src={milestoneImages[index].src}
+              src={milestoneImages[index]}
               width={72} />
             <div>
               <h3>{milestone.title}</h3>
@@ -114,19 +123,26 @@ const milestoneImages = [
         ))}
       </ol>
 
-      <picture>
-        <source
-          media="(prefers-color-scheme: dark)"
-          srcset={imageJourneyDark.src}
-        >
-        <img
-          alt={about.decorativeImages.journey.alt}
-          class="journey-placeholder"
-          height={imageJourneyLight.height}
-          src={imageJourneyLight.src}
-          width={imageJourneyLight.width}
-        >
-      </picture>
+      <div class="about-journey-image">
+        <div class="theme-light">
+          <Image
+            alt={about.decorativeImages.journey.alt}
+            class="journey-placeholder"
+            sizes="(max-width: 768px) 7rem, 8rem"
+            src={imageJourneyLight}
+            widths={[180, 360, 720, 1134]}
+          />
+        </div>
+        <div class="theme-dark">
+          <Image
+            alt={about.decorativeImages.journey.alt}
+            class="journey-placeholder"
+            sizes="(max-width: 768px) 7rem, 8rem"
+            src={imageJourneyDark}
+            widths={[180, 360, 720, 1134]}
+          />
+        </div>
+      </div>
     </section>
   </main>
 </Layout>
@@ -152,7 +168,7 @@ const milestoneImages = [
     overflow: hidden;
     // background: linear-gradient(135deg, var(--background-secondary), #dce4cf);
 
-    img {
+    :global(.about-portrait-image) {
       display: block;
       width: 100%;
       height: 100%;
@@ -230,31 +246,65 @@ const milestoneImages = [
     }
   }
 
-  .icon-placeholder {
-    display: block;
-    box-sizing: border-box;
-    border: 1px dashed var(--border);
-    // background: color-mix(in srgb, var(--background-secondary) 72%, var(--accent));
-  }
-
-  .wide-placeholder,
-  .journey-placeholder {
+  :global(.icon-placeholder) {
     display: block;
     box-sizing: border-box;
   }
 
-  .icon-placeholder {
+  :global(.wide-placeholder),
+  :global(.journey-placeholder) {
+    display: block;
+    box-sizing: border-box;
+  }
+
+  .theme-dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .theme-light {
+      display: none;
+    }
+
+    .theme-dark {
+      display: block;
+    }
+  }
+
+  :global(.icon-placeholder) {
     border-radius: 50%;
   }
 
-  .highlights .icon-placeholder {
+  .highlights :global(.icon-placeholder) {
     border: 0;
     background: transparent;
   }
 
-  .milestones .icon-placeholder {
+  .milestones :global(.icon-placeholder) {
     border: 0;
     background: transparent;
+  }
+
+  .about-quote-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    > div {
+      width: 100%;
+      height: 100%;
+    }
+
+    :global(.wide-placeholder) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+      opacity: 0.15;
+      filter: brightness(120%);
+      mix-blend-mode: multiply;
+    }
   }
 
   .about-quote {
@@ -266,19 +316,6 @@ const milestoneImages = [
     overflow: hidden;
     border-radius: calc(var(--border-radius) * 4);
     // background: color-mix(in srgb, var(--background-secondary) 75%, var(--accent));
-
-    .wide-placeholder {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      border-radius: inherit;
-      // filter: brightness(0.65) saturate(0.45) blur(3px);
-      opacity: 0.15;
-      filter: brightness(120%);
-      mix-blend-mode: multiply;
-    }
 
     blockquote {
       z-index: 1;
@@ -361,7 +398,7 @@ const milestoneImages = [
     }
   }
 
-  .journey-placeholder {
+  :global(.journey-placeholder) {
     width: 8rem;
     height: auto;
     min-height: 10rem;
@@ -409,7 +446,7 @@ const milestoneImages = [
       border: 0;
     }
 
-    .journey-placeholder {
+    :global(.journey-placeholder) {
       justify-self: end;
       width: 7rem;
       margin-top: -5rem;

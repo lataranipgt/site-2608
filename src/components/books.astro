@@ -1,13 +1,13 @@
 ---
+/** Renders a list of book cover cards. */
+import { Image } from "astro:assets";
 import { data } from "../data.mjs";
 
-type BookDisplay = "full" | "short";
-
 interface Props {
-  display: BookDisplay;
+  display?: BookDisplay;
 }
 
-const { display } = Astro.props;
+type BookDisplay = "full" | "short";
 ---
 
 <section class="books-container">
@@ -17,13 +17,11 @@ const { display } = Astro.props;
         <li class="book-card">
           <a href={`/books/${slug}`}>
             <div class="cover image">
-              <img
+              <Image
                 alt={`${title} Cover`}
-                height={
-                  display === 'full' ? cover.height * 1 : cover.height * 0.2
-                }
-                src={cover.src}
-                width={display === 'full' ? cover.width * 1 : cover.width * 0.2}
+                sizes="222px"
+                src={cover}
+                widths={[222, 444]}
               />
             </div>
             <span class="title">{title}</span>

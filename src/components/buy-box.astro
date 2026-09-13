@@ -1,6 +1,7 @@
 ---
 /** Renders purchase links and an optional preview link for a book. */
 
+import { Image } from "astro:assets";
 import amazonBuyDark from "../assets/outbound/amazon-buy-dark.png";
 import amazonBuyLight from "../assets/outbound/amazon-buy-light.png";
 import flipkartBuyDark from "../assets/outbound/flipkart-buy-dark.png";
@@ -28,28 +29,46 @@ const hasPurchaseLinks = Boolean(
       {showPreviewLink && <a class="preview-book-link" href={`/books/${book.slug}/preview`}>Preview Book</a>}
       {book.buyLinks?.amazon && (
         <a href={book.buyLinks.amazon} rel="noopener noreferrer" target="_blank">
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset={amazonBuyDark.src} />
-            <img
-              alt={`Buy ${book.title} on Amazon`}
-              height={amazonBuyLight.height}
-              src={amazonBuyLight.src}
-              width={amazonBuyLight.width}
-            />
-          </picture>
+          <div class="buy-button-theme">
+            <div class="theme-light">
+              <Image
+                alt={`Buy ${book.title} on Amazon`}
+                sizes="240px"
+                src={amazonBuyLight}
+                widths={[240, 480]}
+              />
+            </div>
+            <div class="theme-dark">
+              <Image
+                alt={`Buy ${book.title} on Amazon`}
+                sizes="240px"
+                src={amazonBuyDark}
+                widths={[240, 480]}
+              />
+            </div>
+          </div>
         </a>
       )}
       {book.buyLinks?.flipkart && (
         <a href={book.buyLinks.flipkart} rel="noopener noreferrer" target="_blank">
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset={flipkartBuyDark.src} />
-            <img
-              alt={`Buy ${book.title} on Flipkart`}
-              height={flipkartBuyLight.height}
-              src={flipkartBuyLight.src}
-              width={flipkartBuyLight.width}
-            />
-          </picture>
+          <div class="buy-button-theme">
+            <div class="theme-light">
+              <Image
+                alt={`Buy ${book.title} on Flipkart`}
+                sizes="240px"
+                src={flipkartBuyLight}
+                widths={[240, 480]}
+              />
+            </div>
+            <div class="theme-dark">
+              <Image
+                alt={`Buy ${book.title} on Flipkart`}
+                sizes="240px"
+                src={flipkartBuyDark}
+                widths={[240, 480]}
+              />
+            </div>
+          </div>
         </a>
       )}
     </div>
@@ -89,14 +108,30 @@ const hasPurchaseLinks = Boolean(
 
     a {
       display: block;
+    }
+  }
 
-      img {
+  .buy-button-theme {
+    img {
+      display: block;
+      width: auto;
+      max-width: 15rem;
+      height: auto;
+      border: 1px solid;
+      border-radius: var(--border-radius);
+    }
+
+    .theme-dark {
+      display: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .theme-light {
+        display: none;
+      }
+
+      .theme-dark {
         display: block;
-        width: auto;
-        max-width: 15rem;
-        height: auto;
-        border: 1px solid;
-        border-radius: var(--border-radius);
       }
     }
   }

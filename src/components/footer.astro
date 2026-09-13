@@ -1,5 +1,6 @@
 ---
 /** Site-wide footer with decorative background, author branding, quick links, and social icons. */
+import { Image } from "astro:assets";
 import footerBg from "../assets/abstract/footer-background-alt.png";
 import footerBgDark from "../assets/abstract/footer-background-dark-alt.png";
 import imageSocialFacebook from "../assets/abstract/social-facebook.png";
@@ -72,7 +73,7 @@ const socials = [
         {socials.map(({ image, name, url }) => (
           <li>
             <a href={url} rel="noopener noreferrer" target="_blank" title={name}>
-              <img alt={`Follow Lata Thakur on ${name}`} height="36" loading="lazy" src={image.src} width="36" />
+              <Image alt={`Follow Lata Thakur on ${name}`} height="36" loading="lazy" src={image} width="36" />
             </a>
           </li>
         ))}

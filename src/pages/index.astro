@@ -1,4 +1,6 @@
 ---
+/** Landing page with hero, accomplishments, featured books, and quote. */
+import { Image } from "astro:assets";
 import imageHeroBackground from "../assets/abstract/hero-background.png";
 import imageProfilePic from "../assets/profile/profile-pic1-isolated.png";
 import Books from "../components/books.astro";
@@ -17,11 +19,13 @@ import Layout from "../layouts/layout.astro";
     `}
   >
     <section class="hero">
-      <img
+      <Image
         alt={data.author.name}
         class="hero-profile"
-        src={imageProfilePic.src}
-      >
+        sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, 480px"
+        src={imageProfilePic}
+        widths={[360, 480, 720, 1086]}
+      />
       <div class="hero-intro">
         <header class="hero-header">
           <p class="hero-heading">{data.author.description.heading1}</p>

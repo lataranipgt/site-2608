@@ -1,4 +1,6 @@
 ---
+/** Site layout shell with header, footer, and global styles. */
+import { Image } from "astro:assets";
 import favicon16 from "../assets/abstract/favicon-16.png";
 import favicon32 from "../assets/abstract/favicon-32.png";
 import faviconDark16 from "../assets/abstract/favicon-dark-16.png";
@@ -59,11 +61,13 @@ const { pathname } = Astro.url;
       <header class="header">
         <div class="header-name">
           <a href="/">
-            <img
+            <Image
               alt={data.author.name}
-              src={imageName.src}
+              sizes="160px"
+              src={imageName}
               title={data.author.name}
-            >
+              widths={[160, 320]}
+            />
           </a>
         </div>
         <nav class="header-nav">
@@ -137,6 +141,7 @@ const { pathname } = Astro.url;
     mix-blend-mode: multiply;
     img {
       width: 10rem;
+      height: auto;
     }
     @media (prefers-color-scheme: dark) {
       mix-blend-mode: plus-lighter;

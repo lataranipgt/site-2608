@@ -1,6 +1,7 @@
 ---
 /** Renders the author contact page and enquiry form. */
 
+import { Image } from "astro:assets";
 import imageAudienceLight from "../assets/abstract/contact-audience.png";
 import imageAudienceDark from "../assets/abstract/contact-audience-dark.png";
 import imageAudienceEvents from "../assets/abstract/contact-audience-events.png";
@@ -122,11 +123,11 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
         <ul class="reach-details">
           {contact.reach.details.map((detail, index) => (
             <li>
-              <img
+              <Image
                 alt={`${detail.label} icon`}
                 class="icon-placeholder"
                 height={52}
-                src={reachImages[index].src}
+                src={reachImages[index]}
                 width={52} />
               <div>
                 <h3>{detail.label}</h3>
@@ -146,19 +147,19 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
                 <li>
                   {url ? (
                     <a href={url} rel="noopener noreferrer" target="_blank">
-                      <img
+                      <Image
                         alt={`${name} icon`}
                         class="social-placeholder"
                         height={36}
-                        src={image.src}
+                        src={image}
                         width={36} />
                     </a>
                   ) : (
-                    <img
+                    <Image
                       alt={`${name} icon`}
                       class="social-placeholder"
                       height={36}
-                      src={image.src}
+                      src={image}
                       width={36} />
                   )}
                 </li>
@@ -167,13 +168,13 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
         </div>
 
         <div class="response-time">
-          <img
+          <Image
             alt={`${contact.reach.responseTime.label} icon`}
             class="icon-placeholder"
             height={48}
-            src={imageResponseTime.src}
+            src={imageResponseTime}
             width={48}
-          >
+          />
           <div>
             <h3>{contact.reach.responseTime.label}</h3>
             <p>{contact.reach.responseTime.description}</p>
@@ -190,11 +191,11 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
       <ul>
         {contact.audience.options.map((option, index) => (
           <li>
-            <img
+            <Image
               alt={`${option.title} icon`}
               class="icon-placeholder"
               height={64}
-              src={audienceImages[index].src}
+              src={audienceImages[index]}
               width={64} />
             <div>
               <h3>{option.title}</h3>
@@ -445,8 +446,8 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
     }
   }
 
-  .icon-placeholder,
-  .social-placeholder {
+  :global(.icon-placeholder),
+  :global(.social-placeholder) {
     display: block;
     box-sizing: border-box;
     border: 1px dashed var(--border);
@@ -454,10 +455,10 @@ const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
     background: color-mix(in srgb, var(--background-secondary) 70%, var(--accent));
   }
 
-  .reach-details .icon-placeholder,
-  .social-links .social-placeholder,
-  .response-time .icon-placeholder,
-  .contact-audience .icon-placeholder {
+  .reach-details :global(.icon-placeholder),
+  .social-links :global(.social-placeholder),
+  .response-time :global(.icon-placeholder),
+  .contact-audience :global(.icon-placeholder) {
     border: 0;
     background: transparent;
   }

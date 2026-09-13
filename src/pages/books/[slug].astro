@@ -1,6 +1,7 @@
 ---
 /** Renders a static detail page for each book with a valid slug. */
 
+import { Image } from "astro:assets";
 import BuyBox from "../../components/buy-box.astro";
 import { data } from "../../data.mjs";
 import Layout from "../../layouts/layout.astro";
@@ -55,11 +56,11 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
         <section aria-labelledby="book-title" class="book-detail">
           <div class="book-cover">
             {book.cover ? (
-              <img
+              <Image
                 alt={`Cover of ${book.title}`}
-                height={book.cover.height}
-                src={book.cover.src}
-                width={book.cover.width}
+                sizes="(max-width: 768px) 90vw, 320px"
+                src={book.cover}
+                widths={[320, 640]}
               />
             ) : (
               <div aria-label={`Cover unavailable for ${book.title}`} class="missing-cover" role="img">
@@ -140,11 +141,11 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
                 <li>
                   <a href={`/books/${recommendation.slug}`}>
                     {recommendation.cover ? (
-                      <img
+                      <Image
                         alt={`Cover of ${recommendation.title}`}
-                        height={recommendation.cover.height}
-                        src={recommendation.cover.src}
-                        width={recommendation.cover.width}
+                        sizes="160px"
+                        src={recommendation.cover}
+                        widths={[160, 320]}
                       />
                     ) : (
                       <span class="recommendation-missing-cover">Cover unavailable</span>
@@ -217,7 +218,7 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
     display: flex;
     justify-content: center;
 
-    img,
+    :global(img),
     .missing-cover {
       width: 100%;
       max-width: 20rem;
@@ -356,7 +357,7 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
       text-decoration: none;
     }
 
-    img,
+    :global(img),
     .recommendation-missing-cover {
       width: 100%;
       height: auto;
@@ -381,7 +382,7 @@ const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
       gap: 2rem;
     }
 
-    .book-cover img,
+    .book-cover :global(img),
     .book-cover .missing-cover {
       max-width: 16rem;
     }
