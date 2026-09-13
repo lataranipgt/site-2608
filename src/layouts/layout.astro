@@ -8,11 +8,15 @@ import faviconDark32 from "../assets/abstract/favicon-dark-32.png";
 import imageNoise from "../assets/abstract/noise.jpg";
 import imageSprite from "../assets/abstract/sprite-1.png";
 import imageName from "../assets/profile/name-hindi.png";
+import imageProfilePic from "../assets/profile/profile-pic1-isolated.jpg";
 import Footer from "../components/footer.astro";
 import { data } from "../data.mjs";
 import "../global.scss";
 
 const { pathname } = Astro.url;
+const siteTitle = data.author.name;
+const siteDescription = data.author.description.paragraph;
+const socialImageUrl = new URL(imageProfilePic.src, Astro.site ?? Astro.url);
 ---
 
 <!doctype html>
@@ -49,7 +53,17 @@ const { pathname } = Astro.url;
       type="image/png"
     >
     <meta content={Astro.generator} name="generator">
-    <title>Astro Basics</title>
+    <meta content={siteDescription} name="description">
+    <meta content={siteTitle} property="og:title">
+    <meta content={siteDescription} property="og:description">
+    <meta content="website" property="og:type">
+    <meta content={socialImageUrl} property="og:image">
+    <meta content={data.author.about.portraitAlt} property="og:image:alt">
+    <meta content={siteTitle} name="twitter:title">
+    <meta content={siteDescription} name="twitter:description">
+    <meta content="summary_large_image" name="twitter:card">
+    <meta content={socialImageUrl} name="twitter:image">
+    <title>{siteTitle}</title>
   </head>
   <body
     style={`
