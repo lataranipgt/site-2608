@@ -227,6 +227,7 @@ export const data = {
       heading2: "Lifelong Learner. Published Author.",
       paragraph:
         "Welcome! I'm Lata Thakur — a retired teacher with a deep love for stories that inspire, heal and stay with you. Over the years, I've had the joy of writing many books across genres.",
+      short: "Lata Thakur — Poetry, Books & a Retired Teacher’s Journey",
     },
     name: "Lata Thakur",
     quote: "Books are the quietest and most constant of friends.",
