@@ -1,0 +1,418 @@
+---
+/** Renders Lata Thakur's biography and writing journey. */
+import imageAuthor from "../assets/abstract/about-author.png";
+import imageEducator from "../assets/abstract/about-educator.png";
+import imageJourneyLight from "../assets/abstract/about-journey.png";
+import imageJourneyDark from "../assets/abstract/about-journey-dark.png";
+import imageLifelongLearner from "../assets/abstract/about-lifelong-learner.png";
+import imageMilestoneBook from "../assets/abstract/about-milestone-book.png";
+import imageMilestoneCommunity from "../assets/abstract/about-milestone-community.png";
+import imageMilestoneEducation from "../assets/abstract/about-milestone-education.png";
+import imageMilestoneExploring from "../assets/abstract/about-milestone-exploring.png";
+import imageQuoteLight from "../assets/abstract/about-quote.png";
+import imageQuoteDark from "../assets/abstract/about-quote-dark.png";
+import imageReaders from "../assets/abstract/about-readers.png";
+import imageProfilePic from "../assets/profile/profile-pic1-isolated.png";
+import { data } from "../data.mjs";
+import Layout from "../layouts/layout.astro";
+
+const { about } = data.author;
+const highlightImages = [
+  imageEducator,
+  imageAuthor,
+  imageLifelongLearner,
+  imageReaders,
+];
+const milestoneImages = [
+  imageMilestoneEducation,
+  imageMilestoneCommunity,
+  imageMilestoneBook,
+  imageMilestoneExploring,
+];
+---
+
+<Layout>
+  <main class="about-page">
+    <section class="about-introduction">
+      <div class="about-portrait">
+        <img
+          alt={about.portraitAlt}
+          height={720}
+          loading="eager"
+          src={imageProfilePic.src}
+          width={545}
+        >
+      </div>
+
+      <div class="about-copy">
+        <p class="eyebrow">{about.eyebrow}</p>
+        <h1>{about.heading}</h1>
+        <div class="about-intro">
+          {about.intro.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+
+        <ul class="highlights">
+          {about.highlights.map((highlight, index) => (
+            <li>
+              <img
+                alt={`${highlight.title} icon`}
+                class="icon-placeholder"
+                height={64}
+                src={highlightImages[index].src}
+                width={64} />
+              <div>
+                <h2>{highlight.title}</h2>
+                <p>{highlight.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="about-quote">
+      <picture>
+        <source
+          media="(prefers-color-scheme: dark)"
+          srcset={imageQuoteDark.src}
+        >
+        <img
+          alt={about.decorativeImages.quote.alt}
+          class="wide-placeholder"
+          height={imageQuoteLight.height}
+          src={imageQuoteLight.src}
+          width={imageQuoteLight.width}
+        >
+      </picture>
+      <blockquote>
+        <p>“{about.quote.text}”</p>
+        <footer>— {about.quote.attribution}</footer>
+      </blockquote>
+    </section>
+
+    <section class="journey">
+      <header class="journey-intro">
+        <p class="eyebrow">{about.journey.eyebrow}</p>
+        <h2>{about.journey.heading}</h2>
+        <p>{about.journey.intro}</p>
+      </header>
+
+      <ol class="milestones">
+        {about.journey.milestones.map((milestone, index) => (
+          <li>
+            <img
+              alt={`${milestone.title} icon`}
+              class="icon-placeholder"
+              height={72}
+              src={milestoneImages[index].src}
+              width={72} />
+            <div>
+              <h3>{milestone.title}</h3>
+              <p>{milestone.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <picture>
+        <source
+          media="(prefers-color-scheme: dark)"
+          srcset={imageJourneyDark.src}
+        >
+        <img
+          alt={about.decorativeImages.journey.alt}
+          class="journey-placeholder"
+          height={imageJourneyLight.height}
+          src={imageJourneyLight.src}
+          width={imageJourneyLight.width}
+        >
+      </picture>
+    </section>
+  </main>
+</Layout>
+
+<style lang="scss">
+  .about-page {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+  }
+
+  .about-introduction {
+    display: grid;
+    grid-template-columns: minmax(17rem, 0.86fr) minmax(0, 1.14fr);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    padding: clamp(1.5rem, 5vw, 4.5rem) clamp(1rem, 5vw, 4.5rem) 0;
+  }
+
+  .about-portrait {
+    align-self: stretch;
+    min-height: 31rem;
+    overflow: hidden;
+    // background: linear-gradient(135deg, var(--background-secondary), #dce4cf);
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+    }
+  }
+
+  .about-copy {
+    max-width: 44rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.65rem;
+    color: var(--link);
+    font-family: system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  .journey h2 {
+    margin: 0;
+    font-family: Georgia, serif;
+    font-size: clamp(2.3rem, 5vw, 4.3rem);
+    font-weight: 400;
+    line-height: 1.06;
+  }
+
+  .about-intro {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.75rem;
+
+    p {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.65;
+    }
+  }
+
+  .highlights {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+
+    li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.85rem;
+      align-items: center;
+    }
+
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h2,
+    h3 {
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+    }
+
+    p {
+      margin-top: 0.25rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+
+  .icon-placeholder {
+    display: block;
+    box-sizing: border-box;
+    border: 1px dashed var(--border);
+    // background: color-mix(in srgb, var(--background-secondary) 72%, var(--accent));
+  }
+
+  .wide-placeholder,
+  .journey-placeholder {
+    display: block;
+    box-sizing: border-box;
+  }
+
+  .icon-placeholder {
+    border-radius: 50%;
+  }
+
+  .highlights .icon-placeholder {
+    border: 0;
+    background: transparent;
+  }
+
+  .milestones .icon-placeholder {
+    border: 0;
+    background: transparent;
+  }
+
+  .about-quote {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(10rem, 16vw, 13rem);
+    margin: 0 clamp(1rem, 5vw, 4.5rem);
+    overflow: hidden;
+    border-radius: calc(var(--border-radius) * 4);
+    // background: color-mix(in srgb, var(--background-secondary) 75%, var(--accent));
+
+    .wide-placeholder {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: inherit;
+      // filter: brightness(0.65) saturate(0.45) blur(3px);
+      opacity: 0.15;
+      filter: brightness(120%);
+      mix-blend-mode: multiply;
+    }
+
+    blockquote {
+      z-index: 1;
+      max-width: 48rem;
+      margin: 0;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
+      font-style: italic;
+      line-height: 1.35;
+    }
+
+    footer {
+      margin-top: 0.85rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+  }
+
+  .journey {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.65fr) minmax(0, 1.35fr) auto;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+    padding: 0 clamp(1rem, 5vw, 4.5rem);
+  }
+
+  .journey-intro {
+    padding-right: clamp(0rem, 3vw, 3rem);
+    border-right: 1px solid var(--border);
+
+    h2 {
+      font-size: clamp(2rem, 3.7vw, 3.1rem);
+    }
+
+    > p:last-child {
+      margin: 1.25rem 0 0;
+      line-height: 1.55;
+    }
+  }
+
+  .milestones {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 2.5rem;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.85rem;
+      align-items: center;
+    }
+
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h3 {
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+    }
+
+    p {
+      margin-top: 0.35rem;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+  }
+
+  .journey-placeholder {
+    width: 8rem;
+    height: auto;
+    min-height: 10rem;
+    border-radius: 0.25rem;
+  }
+
+  @media (width < $media-medium) {
+    .about-page {
+      gap: 2.5rem;
+    }
+
+    .about-introduction {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0;
+    }
+
+    .about-portrait {
+      min-height: 18rem;
+      max-height: $media-small;
+    }
+
+    .about-copy {
+      padding: 2rem 1.5rem 0;
+    }
+
+    .highlights,
+    .milestones {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .about-quote {
+      margin: 0 1rem;
+    }
+
+    .journey {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 0 1.5rem;
+    }
+
+    .journey-intro {
+      padding: 0;
+      border: 0;
+    }
+
+    .journey-placeholder {
+      justify-self: end;
+      width: 7rem;
+      margin-top: -5rem;
+    }
+  }
+</style>

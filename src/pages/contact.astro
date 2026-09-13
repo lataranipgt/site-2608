@@ -1,0 +1,610 @@
+---
+/** Renders the author contact page and enquiry form. */
+
+import imageAudienceLight from "../assets/abstract/contact-audience.png";
+import imageAudienceDark from "../assets/abstract/contact-audience-dark.png";
+import imageAudienceEvents from "../assets/abstract/contact-audience-events.png";
+import imageAudienceMedia from "../assets/abstract/contact-audience-media.png";
+import imageAudienceReaders from "../assets/abstract/contact-audience-readers.png";
+import imageEmail from "../assets/abstract/contact-email.png";
+import imageLocation from "../assets/abstract/contact-location.png";
+import imagePhone from "../assets/abstract/contact-phone.png";
+import imageResponseTime from "../assets/abstract/contact-response-time.png";
+import imageFacebook from "../assets/abstract/social-facebook.png";
+import imageGoodreads from "../assets/abstract/social-goodreads.png";
+import imageInstagram from "../assets/abstract/social-instagram.png";
+import imageLinkedin from "../assets/abstract/social-linkedin.png";
+import imageYoutube from "../assets/abstract/social-youtube.png";
+import { data } from "../data.mjs";
+import Layout from "../layouts/layout.astro";
+
+const { contact } = data.author;
+const audienceImages = [
+  imageAudienceReaders,
+  imageAudienceEvents,
+  imageAudienceMedia,
+];
+const reachImages = [imageEmail, imagePhone, imageLocation];
+const socialImages = [
+  imageFacebook,
+  imageInstagram,
+  imageLinkedin,
+  imageYoutube,
+  imageGoodreads,
+];
+/** Builds social link info combining names, URLs, and images for template rendering. */
+const socialLinks = contact.reach.social.map((name, index) => ({
+  image: socialImages[index],
+  name,
+  url: (contact.reach.socialUrls as Record<string, string | null>)[
+    name.toLowerCase()
+  ],
+}));
+
+/** Maps form field type names to HTML input type attribute values. */
+const fieldInputTypes: Record<string, "email" | "tel" | "text"> = {
+  email: "email",
+  tel: "tel",
+  text: "text",
+};
+---
+
+<Layout>
+  <main class="contact-page">
+    <section class="contact-hero">
+      <picture>
+        <source
+          media="(prefers-color-scheme: dark)"
+          srcset={imageAudienceDark.src}
+        >
+        <img
+          alt={contact.decorativeImage.alt}
+          class="hero-placeholder"
+          height={imageAudienceLight.height}
+          src={imageAudienceLight.src}
+          width={imageAudienceLight.width}
+        >
+      </picture>
+      <div class="contact-hero-copy">
+        <p class="eyebrow">{contact.eyebrow}</p>
+        <h1>{contact.heading}</h1>
+        <p>{contact.intro}</p>
+        <p class="invitation">{contact.invitation}</p>
+      </div>
+    </section>
+
+    <section class="contact-main">
+      <form class="contact-form">
+        <header>
+          <h2>{contact.form.heading}</h2>
+          <p>{contact.form.note}</p>
+        </header>
+
+        <div class="form-fields">
+          {contact.form.fields.map((field) => (
+            <label
+              for={field.name}
+              class:list={{ "field-wide": field.type === "textarea" }}
+            >
+              <span>{field.label}{field.required && " *"}</span>
+              {field.type === "textarea" ? (
+                <textarea
+                  id={field.name}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  rows={5}
+                />
+              ) : (
+                <input
+                  id={field.name}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  type={fieldInputTypes[field.type] ?? "text"}
+                />
+              )}
+            </label>
+          ))}
+        </div>
+        <input name="access_key" type="hidden" value={contact.webformAccessKey}>
+        <button type="submit">{contact.form.buttonLabel}</button>
+        <div
+          aria-live="polite"
+          class="form-result"
+          hidden
+          id="form-result"
+        ></div>
+      </form>
+
+      <aside class="contact-reach">
+        <h2>{contact.reach.heading}</h2>
+        <ul class="reach-details">
+          {contact.reach.details.map((detail, index) => (
+            <li>
+              <img
+                alt={`${detail.label} icon`}
+                class="icon-placeholder"
+                height={52}
+                src={reachImages[index].src}
+                width={52} />
+              <div>
+                <h3>{detail.label}</h3>
+                <p class="detail-value">{detail.value}</p>
+                <p>{detail.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div class="social-links">
+          <h3>{contact.reach.socialHeading}</h3>
+          <ul>
+            {socialLinks
+              .filter(s => s.url)
+              .map(({ name, url, image }) => (
+                <li>
+                  {url ? (
+                    <a href={url} rel="noopener noreferrer" target="_blank">
+                      <img
+                        alt={`${name} icon`}
+                        class="social-placeholder"
+                        height={36}
+                        src={image.src}
+                        width={36} />
+                    </a>
+                  ) : (
+                    <img
+                      alt={`${name} icon`}
+                      class="social-placeholder"
+                      height={36}
+                      src={image.src}
+                      width={36} />
+                  )}
+                </li>
+              ))}
+          </ul>
+        </div>
+
+        <div class="response-time">
+          <img
+            alt={`${contact.reach.responseTime.label} icon`}
+            class="icon-placeholder"
+            height={48}
+            src={imageResponseTime.src}
+            width={48}
+          >
+          <div>
+            <h3>{contact.reach.responseTime.label}</h3>
+            <p>{contact.reach.responseTime.description}</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="contact-audience">
+      <header>
+        <h2>{contact.audience.heading}</h2>
+        <p>{contact.audience.intro}</p>
+      </header>
+      <ul>
+        {contact.audience.options.map((option, index) => (
+          <li>
+            <img
+              alt={`${option.title} icon`}
+              class="icon-placeholder"
+              height={64}
+              src={audienceImages[index].src}
+              width={64} />
+            <div>
+              <h3>{option.title}</h3>
+              <p>{option.description}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  /** Submits the contact form via Web3Forms API. */
+  function handleFormSubmit(event: Event) {
+    const form = event.currentTarget as HTMLFormElement;
+    const result = document.getElementById("form-result");
+    if (!(result && form)) {
+      return;
+    }
+
+    event.preventDefault();
+    result.hidden = false;
+    result.textContent = "Sending...";
+
+    fetch("https://api.web3forms.com/submit", {
+      body: new FormData(form),
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          result.textContent =
+            "Message sent successfully. I'll get back to you soon.";
+          form.reset();
+        } else {
+          result.textContent =
+            data.message || "Something went wrong. Please try again.";
+        }
+      })
+      .catch(() => {
+        result.textContent =
+          "Unable to send your message. Please try again later.";
+      });
+  }
+
+  const contactForm = document.querySelector(".contact-form");
+  if (contactForm) {
+    contactForm.addEventListener("submit", handleFormSubmit);
+  }
+</script>
+
+<style lang="scss">
+  .contact-page {
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+  }
+
+  .contact-hero {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: clamp(17rem, 26vw, 24rem);
+    overflow: hidden;
+    // background: color-mix(in srgb, var(--background-secondary) 76%, var(--accent));
+  }
+
+  .hero-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    // filter: brightness(0.5) saturate(0.15) blur(4px);
+    // filter: blur(4px);
+    // filter: brightness(0.5);
+    // object-fit: cover;
+    // opacity: 0.35;
+    @media (prefers-color-scheme: light) {
+      // mix-blend-mode: multiply;
+      // filter: brightness(120%);
+    }
+  }
+
+  .contact-hero-copy {
+    z-index: 1;
+    width: min(100% - 2rem, 43rem);
+    padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1rem, 10vw, 9rem);
+
+    h1,
+    p {
+      margin: 0;
+    }
+
+    h1,
+    .contact-main h2,
+    .contact-audience h2 {
+      font-family: Georgia, serif;
+      font-weight: 400;
+    }
+
+    h1 {
+      color: var(--accent);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1;
+    }
+
+    > p:not(.eyebrow) {
+      max-width: 34rem;
+      margin-top: 1rem;
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+
+    .invitation {
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      font-style: italic;
+    }
+  }
+
+  .eyebrow {
+    margin: 0 0 0.65rem;
+    color: var(--link);
+    font-family: system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .contact-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(19rem, 0.85fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1rem, 5vw, 2rem);
+  }
+
+  .contact-form {
+    header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h2 {
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-family: system-ui, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+  }
+
+  .form-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .form-fields label {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
+
+    span {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+  }
+
+  .form-fields input,
+  .form-fields textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    resize: vertical;
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
+  }
+
+  .form-fields .field-wide {
+    grid-column: 1 / -1;
+  }
+
+  .contact-form button {
+    width: 100%;
+    margin-top: 0.85rem;
+    padding: 0.9rem;
+    border: 0;
+    border-radius: var(--border-radius);
+    background: var(--accent);
+    color: var(--accent-text);
+    font: 1.1rem Georgia, serif;
+    cursor: pointer;
+  }
+
+  .form-result {
+    margin-top: 0.85rem;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    background: color-mix(in srgb, var(--background-secondary) 70%, var(--accent));
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .contact-reach {
+    padding-left: clamp(0rem, 5vw, 4rem);
+    border-left: 1px solid var(--border);
+
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    }
+
+    h3 {
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+  }
+
+  .icon-placeholder,
+  .social-placeholder {
+    display: block;
+    box-sizing: border-box;
+    border: 1px dashed var(--border);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--background-secondary) 70%, var(--accent));
+  }
+
+  .reach-details .icon-placeholder,
+  .social-links .social-placeholder,
+  .response-time .icon-placeholder,
+  .contact-audience .icon-placeholder {
+    border: 0;
+    background: transparent;
+  }
+
+  .reach-details {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+
+    li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .detail-value {
+      margin-top: 0.15rem;
+    }
+
+    p:not(.detail-value) {
+      margin-top: 0.25rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.35;
+    }
+  }
+
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+
+    ul {
+      display: flex;
+      gap: 0.55rem;
+    }
+  }
+
+  .response-time {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+    align-items: center;
+    margin-top: 1.25rem;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    background: color-mix(in srgb, var(--background-secondary) 78%, var(--accent));
+
+    p {
+      margin-top: 0.2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  }
+
+  .contact-audience {
+    padding: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 5vw, 4.5rem);
+    border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    // background: color-mix(in srgb, var(--background-secondary) 55%, transparent);
+
+    header {
+      text-align: center;
+    }
+
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h2 {
+      font-size: clamp(1.75rem, 3vw, 2.35rem);
+    }
+
+    header p {
+      margin-top: 0.25rem;
+    }
+
+    > ul {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      max-width: 68rem;
+      margin: 1.25rem auto 0;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.9rem;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius);
+      background: color-mix(in srgb, var(--surface) 70%, transparent);
+    }
+
+    h3 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: 1.08rem;
+      font-weight: 400;
+    }
+
+    li p {
+      margin-top: 0.3rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+  }
+
+  @media (width < $media-medium) {
+    .contact-hero-copy {
+      width: auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .contact-main {
+      grid-template-columns: 1fr;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .contact-form header {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .form-fields {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-reach {
+      padding: 2rem 0 0;
+      border-top: 1px solid var(--border);
+      border-left: 0;
+    }
+
+    .contact-audience {
+      padding: 2.5rem 1.5rem;
+
+      > ul {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+</style>

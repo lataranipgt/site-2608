@@ -1,0 +1,85 @@
+---
+import { data } from "../data.mjs";
+
+type BookDisplay = "full" | "short";
+
+interface Props {
+  display: BookDisplay;
+}
+
+const { display } = Astro.props;
+---
+
+<section class="books-container">
+  <!-- <pre>Books Component</pre> -->
+  <ul class="books-list">
+    {data.books.map(({ slug, title, cover, genre }) => (
+        <li class="book-card">
+          <a href={`/books/${slug}`}>
+            <div class="cover image">
+              <img
+                alt={`${title} Cover`}
+                height={
+                  display === 'full' ? cover.height * 1 : cover.height * 0.2
+                }
+                src={cover.src}
+                width={display === 'full' ? cover.width * 1 : cover.width * 0.2}
+              />
+            </div>
+            <span class="title">{title}</span>
+            <span class="genre">{genre}</span>
+          </a>
+        </li>
+      ))}
+  </ul>
+</section>
+
+<style>
+  /* Reset */
+  ul,
+  li {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+  }
+
+  /* List */
+
+  .books-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  /* Cards */
+
+  .book-card {
+    width: 222px;
+    margin-bottom: 2rem;
+  }
+
+  .book-card a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-transform: capitalize;
+    text-decoration: none;
+  }
+
+  /* Card */
+
+  .cover img {
+    width: 100%;
+    height: auto;
+    max-height: 18rem;
+    border-radius: var(--border-radius);
+  }
+
+  .book-card .title {
+    margin-bottom: 0.5rem;
+    font-size: 1.25em;
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,64 @@
+* {
+  /* background: yellow; */
+}
+
+/* Colors */
+
+:root {
+  --background: #f8e9c6;
+  --background-secondary: #fff6df;
+  --surface: #fffaf0;
+  --text: #3a2d22;
+  --text-muted: #746354;
+  --primary: #6f5a3e;
+  --primary-text: #ffffff;
+  --accent: #60785d;
+  --accent-text: #ffffff;
+  --border: #d7c7a6;
+  --link: #75572f;
+  @media (prefers-color-scheme: dark) {
+    --background: #1f1a14;
+    --background-secondary: #2a231b;
+    --surface: #30281f;
+    --text: #f4e6ca;
+    --text-muted: #c6b79f;
+    --primary: #d8bc8b;
+    --primary-text: #241c14;
+    --accent: #9fbc99;
+    --accent-text: #172016;
+    --border: #594b3c;
+    --link: #e4c58f;
+  }
+}
+
+/* Sizes */
+
+$media-large: 1200px;
+$media-small: 600px;
+$media-medium: 1000px;
+$media-extra-small: 400px;
+
+:root {
+  --border-radius: 0.25rem;
+  --link-padding: 2rem;
+  @media (width < 600px) {
+    --link-padding: 0.5rem;
+  }
+  @media (width < 500px) {
+    --link-padding: 0rem;
+  }
+}
+
+/* Mixins */
+
+@mixin a-button {
+  background: var(--primary);
+  color: var(--primary-text);
+  text-decoration: none;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  @media (prefers-color-scheme: dark) {
+    // background: var(--primary-text);
+    // color: var(--primary);
+  }
+}

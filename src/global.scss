@@ -1,0 +1,25 @@
+* {
+  /* background: yellow; */
+}
+
+// Reset
+
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  list-style: none;
+  display: flow-root;
+}
+
+body {
+  @media (prefers-color-scheme: dark) {
+    background: var(--background);
+    color: var(--text);
+  }
+}
+
+a {
+  color: var(--text);
+}

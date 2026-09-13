@@ -1,0 +1,237 @@
+---
+import imageHeroBackground from "../assets/abstract/hero-background.png";
+import imageProfilePic from "../assets/profile/profile-pic1-isolated.png";
+import Books from "../components/books.astro";
+import Separator from "../components/separator.astro";
+import { data } from "../data.mjs";
+import Layout from "../layouts/layout.astro";
+---
+
+<Layout>
+  <div
+    class="hero-container"
+    style={`
+      --image-hero-background: url(${imageHeroBackground.src});
+      --image-profile-pic: url(${imageProfilePic.src});
+      --image-hero-background-width: ${imageHeroBackground.width}px;
+    `}
+  >
+    <section class="hero">
+      <img
+        alt={data.author.name}
+        class="hero-profile"
+        src={imageProfilePic.src}
+      >
+      <div class="hero-intro">
+        <header class="hero-header">
+          <p class="hero-heading">{data.author.description.heading1}</p>
+          <p class="hero-subheading">
+            {data.author.description.heading2}
+          </p>
+        </header>
+        <Separator />
+        <p class="hero-description">
+          {data.author.description.paragraph}
+        </p>
+        <div class="hero-links">
+          <ul>
+            <li><a href="/books">View Books</a></li>
+            <li><a href="/about">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+  <section class="accomplishments">
+    <ul>
+      {data.author.accomplishments.map(({ metric, value }) => (
+          <li class="accomplishments-item">
+            <span class="accomplishments-value">{value}</span>
+            <span class="accomplishments-metric">{metric}</span>
+          </li>
+        ))}
+    </ul>
+  </section>
+  <section class="books-preview">
+    <header>
+      <h2>Featured Books</h2>
+    </header>
+    <Books display="short" />
+    <a class="books-preview-more" href="/books">Browse All Books</a>
+  </section>
+  <section class="quote">
+    <blockquote>
+      <p>{data.author.quote}</p>
+    </blockquote>
+    <div class="separator">
+      <Separator />
+    </div>
+  </section>
+</Layout>
+
+<style lang="scss">
+  // Hero
+
+  .hero-container {
+    @media (width > $media-large) {
+      border-radius: var(--border-radius);
+    }
+    position: relative;
+    &::before {
+      content: '';
+      z-index: -1;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-image: var(--image-hero-background);
+      // filter: brightness(0.65) saturate(0.45) blur(3px);
+      @media (prefers-color-scheme: dark) {
+        filter: invert(1) brightness(0.65) saturate(0.45) blur(3px);
+        filter: invert(1);
+        // filter: invert(1) brightness(1.65) saturate(0.45) blur(3px);
+      }
+    }
+  }
+
+  .hero {
+    display: flow-root;
+    max-width: 1.5 * $media-small;
+    margin: auto;
+    @media (width < $media-small) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 2rem;
+    }
+  }
+
+  .hero-profile {
+    float: right;
+    width: auto;
+    shape-outside: var(--image-profile-pic);
+    shape-margin: 1rem;
+    height: 100%;
+    max-height: 30em;
+    @media (prefers-color-scheme: dark) {
+      mix-blend-mode: lighten;
+    }
+  }
+
+  .hero-intro {
+    max-width: $media-small;
+    @media (width > $media-small) {
+      padding-left: 1rem;
+    }
+  }
+  .hero-header {
+    font-weight: bold;
+    @media (width > 1.5 * $media-small) {
+      text-align: center;
+    }
+    @media (width < $media-small) {
+      text-align: center;
+    }
+  }
+  .hero-heading {
+    font-size: 2em;
+  }
+  .hero-subheading {
+    font-size: 1.5em;
+  }
+
+  .hero-links {
+    ul {
+      display: flex;
+      gap: 1rem;
+      @media (width < $media-small) {
+        justify-content: center;
+      }
+    }
+    a {
+      display: flow-root;
+      @include a-button;
+    }
+  }
+
+  // Accomplishments
+
+  .accomplishments {
+    // border: 1px dotted;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(#ffefcab0 0%, #ffefca 75%, #ffefcab0 100%);
+    @media (prefers-color-scheme: dark) {
+      background: linear-gradient(
+        var(--background) 0%,
+        var(--background-secondary) 75%,
+        var(--background) 100%
+      );
+    }
+    ul {
+      display: flex;
+      gap: 1rem;
+      align-items: stretch;
+    }
+  }
+  .accomplishments-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: -0.66rem;
+      border-right: 1px solid;
+      height: 50%;
+    }
+  }
+  .accomplishments-value {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  .accomplishments-metric {
+    font-size: 0.8em;
+    color: var(--text-muted);
+  }
+
+  // Books Preview
+
+  .books-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .books-preview-more {
+    @include a-button;
+    display: flex;
+    gap: 1rem;
+    &::after {
+      content: '→';
+    }
+  }
+
+  // Quote
+
+  .quote {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--primary);
+    color: var(--primary-text);
+    padding: 1rem;
+    blockquote {
+      margin: 0;
+    }
+    .separator {
+      width: 30%;
+    }
+  }
+</style>

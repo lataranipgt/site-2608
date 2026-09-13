@@ -1,0 +1,109 @@
+---
+/** Renders purchase links and an optional preview link for a book. */
+
+import amazonBuyDark from "../assets/outbound/amazon-buy-dark.png";
+import amazonBuyLight from "../assets/outbound/amazon-buy-light.png";
+import flipkartBuyDark from "../assets/outbound/flipkart-buy-dark.png";
+import flipkartBuyLight from "../assets/outbound/flipkart-buy-light.png";
+import type { data } from "../data.mjs";
+
+type Book = (typeof data.books)[number];
+
+interface Props {
+  book: Book;
+  heading?: string;
+  showPreviewLink?: boolean;
+}
+
+const { book, heading = "Read or Buy", showPreviewLink = false } = Astro.props;
+const hasPurchaseLinks = Boolean(
+  book.buyLinks?.amazon || book.buyLinks?.flipkart
+);
+---
+
+<section aria-labelledby="book-access-heading" class="buy-box">
+  <h2 id="book-access-heading">{heading}</h2>
+  {(showPreviewLink || hasPurchaseLinks) && (
+    <div class="purchase-links">
+      {showPreviewLink && <a class="preview-book-link" href={`/books/${book.slug}/preview`}>Preview Book</a>}
+      {book.buyLinks?.amazon && (
+        <a href={book.buyLinks.amazon} rel="noopener noreferrer" target="_blank">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset={amazonBuyDark.src} />
+            <img
+              alt={`Buy ${book.title} on Amazon`}
+              height={amazonBuyLight.height}
+              src={amazonBuyLight.src}
+              width={amazonBuyLight.width}
+            />
+          </picture>
+        </a>
+      )}
+      {book.buyLinks?.flipkart && (
+        <a href={book.buyLinks.flipkart} rel="noopener noreferrer" target="_blank">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset={flipkartBuyDark.src} />
+            <img
+              alt={`Buy ${book.title} on Flipkart`}
+              height={flipkartBuyLight.height}
+              src={flipkartBuyLight.src}
+              width={flipkartBuyLight.width}
+            />
+          </picture>
+        </a>
+      )}
+    </div>
+  )}
+  {!hasPurchaseLinks && <p class="purchase-status">Purchase links coming soon.</p>}
+</section>
+
+<style lang="scss">
+  .buy-box {
+    padding: 1.5rem;
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--border-radius) * 2);
+    background: var(--surface);
+    box-shadow: 0 0.25rem 0.65rem color-mix(in srgb, var(--text) 8%, transparent);
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+  }
+
+  .purchase-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+
+    .preview-book-link {
+      @include a-button;
+      display: flex;
+      flex-basis: 100%;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    a {
+      display: block;
+
+      img {
+        display: block;
+        width: auto;
+        max-width: 15rem;
+        height: auto;
+        border: 1px solid;
+        border-radius: var(--border-radius);
+      }
+    }
+  }
+
+  .purchase-status {
+    margin: 0;
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>

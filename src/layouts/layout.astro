@@ -1,0 +1,170 @@
+---
+import favicon16 from "../assets/abstract/favicon-16.png";
+import favicon32 from "../assets/abstract/favicon-32.png";
+import faviconDark16 from "../assets/abstract/favicon-dark-16.png";
+import faviconDark32 from "../assets/abstract/favicon-dark-32.png";
+import imageNoise from "../assets/abstract/noise.jpg";
+import imageSprite from "../assets/abstract/sprite-1.png";
+import imageName from "../assets/profile/name-hindi.png";
+import Footer from "../components/footer.astro";
+import { data } from "../data.mjs";
+import "../global.scss";
+
+const { pathname } = Astro.url;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width" name="viewport">
+    <link
+      href={favicon32.src}
+      media="(prefers-color-scheme: light)"
+      rel="icon"
+      sizes="32x32"
+      type="image/png"
+    >
+    <link
+      href={favicon16.src}
+      media="(prefers-color-scheme: light)"
+      rel="icon"
+      sizes="16x16"
+      type="image/png"
+    >
+    <link
+      href={faviconDark32.src}
+      media="(prefers-color-scheme: dark)"
+      rel="icon"
+      sizes="32x32"
+      type="image/png"
+    >
+    <link
+      href={faviconDark16.src}
+      media="(prefers-color-scheme: dark)"
+      rel="icon"
+      sizes="16x16"
+      type="image/png"
+    >
+    <meta content={Astro.generator} name="generator">
+    <title>Astro Basics</title>
+  </head>
+  <body
+    style={`
+    --sprite: url(${imageSprite.src});
+    --image-noise: url(${imageNoise.src});
+  `}
+  >
+    <div class="main-container">
+      <header class="header">
+        <div class="header-name">
+          <a href="/">
+            <img
+              alt={data.author.name}
+              src={imageName.src}
+              title={data.author.name}
+            >
+          </a>
+        </div>
+        <nav class="header-nav">
+          <a href="/" class:list={{ active: pathname === '/' }}
+            >&nbsp; Home &nbsp;</a
+          >
+          <a href="/books" class:list={{ active: pathname === '/books' }}
+            >&nbsp; Books &nbsp;</a
+          >
+          <a href="/about" class:list={{ active: pathname === '/about' }}
+            >&nbsp; About &nbsp;</a
+          >
+          <a href="/contact" class:list={{ active: pathname === '/contact' }}
+            >&nbsp; Contact &nbsp;</a
+          >
+        </nav>
+      </header>
+      <slot />
+      <Footer />
+    </div>
+  </body>
+</html>
+
+<style lang="scss">
+  html,
+  body {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    margin: auto;
+    /* overflow-x: hidden; */
+  }
+
+  body::before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: var(--image-noise);
+    background-size: cover;
+    mix-blend-mode: multiply;
+    opacity: 0.09;
+    @media (prefers-color-scheme: dark) {
+      display: none;
+      /* filter: invert(1); */
+      /* opacity: 0.19; */
+      /* mix-blend-mode: screen; */
+    }
+  }
+
+  .main-container {
+    /* max-width: 1200px; */
+    overflow-x: hidden;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    a {
+      display: inline-block;
+      padding-top: var(--link-padding);
+      padding-bottom: var(--link-padding);
+      text-decoration: none;
+    }
+  }
+  .header-name {
+    mix-blend-mode: multiply;
+    img {
+      width: 10rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      mix-blend-mode: plus-lighter;
+      filter: invert(1);
+    }
+    a {
+      padding-left: var(--link-padding);
+    }
+  }
+  .header-nav {
+    /* margin-right: 1rem; */
+    display: flex;
+    /* margin-right: 1rem; */
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    a {
+      padding-right: var(--link-padding);
+      text-decoration: none;
+      text-decoration-thickness: 0.2rem;
+      text-underline-offset: 0.75rem;
+      &:first-of-type {
+        @media (width < $media-small) {
+          display: none;
+        }
+      }
+    }
+    .active {
+      text-decoration-line: underline;
+    }
+  }
+</style>

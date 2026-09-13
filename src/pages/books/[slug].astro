@@ -1,0 +1,414 @@
+---
+/** Renders a static detail page for each book with a valid slug. */
+
+import BuyBox from "../../components/buy-box.astro";
+import { data } from "../../data.mjs";
+import Layout from "../../layouts/layout.astro";
+import { hasBookPreview } from "../../utils/book-previews";
+
+/** Generates static paths only for books that can be linked safely. */
+export function getStaticPaths() {
+  return data.books
+    .filter(
+      ({ slug: slugBook }) => typeof slugBook === "string" && slugBook.trim()
+    )
+    .map(({ slug: slugBook }) => ({
+      params: { slug: slugBook },
+    }));
+}
+
+const { slug } = Astro.params;
+const book = data.books.find((b) => b.slug === slug);
+const recommendations = data.books
+  .filter(({ slug: bookSlug }) => bookSlug && bookSlug !== book?.slug)
+  .slice(0, 4);
+const metadata = book
+  ? [
+      ["Genre", book.genre],
+      ["Publisher", book.publisher],
+      ["Publication Date", book.publicationDate],
+      ["Language", book.language],
+      ["Pages", book.pages],
+      ["ISBN", book.isbn],
+    ]
+  : [];
+const rating = Number(book?.rating);
+const hasRating = Number.isFinite(rating);
+const starCount = hasRating ? Math.round(rating) : 0;
+const reviewCount = Number(book?.reviewCount);
+const hasReviewCount = Number.isFinite(reviewCount);
+const hasPreview = book ? hasBookPreview(book.slug) : false;
+const description = book?.description ?? "";
+const formats = book?.formats ?? [];
+const hasLongDescription = description.length > 300;
+const descriptionPreview = description.slice(0, 300);
+const descriptionParagraphs = description.split("\n").filter(Boolean);
+const previewParagraphs = descriptionPreview.split("\n").filter(Boolean);
+---
+
+<Layout>
+  <main class="book-page">
+    <a class="back-link" href="/books">← Back to Books</a>
+
+    {book && (
+      <>
+        <section aria-labelledby="book-title" class="book-detail">
+          <div class="book-cover">
+            {book.cover ? (
+              <img
+                alt={`Cover of ${book.title}`}
+                height={book.cover.height}
+                src={book.cover.src}
+                width={book.cover.width}
+              />
+            ) : (
+              <div aria-label={`Cover unavailable for ${book.title}`} class="missing-cover" role="img">
+                Cover unavailable
+              </div>
+            )}
+          </div>
+
+          <div class="book-information">
+            <header>
+              <h1 id="book-title">{book.title}</h1>
+              {book.tagline && <p class="tagline">{book.tagline}</p>}
+              {hasRating && (
+                <p class="rating">
+                  <span aria-hidden="true" class="rating-stars">
+                    {"★".repeat(starCount)}
+                  </span>
+                  <span>{rating.toFixed(1)} out of 5</span>
+                  {hasReviewCount && <span>({reviewCount} reviews)</span>}
+                </p>
+              )}
+            </header>
+
+            <dl class="metadata">
+              {metadata.map(([label, value]) => (
+                <div>
+                  <dt>{label}</dt>
+                  <dd>{value ?? "Not available"}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {book.description && (
+              <section aria-labelledby="about-book-heading" class="about-book">
+                <h2 id="about-book-heading">About the Book</h2>
+                <div id="about-book-preview">
+                  {previewParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+                </div>
+                {hasLongDescription && (
+                  <>
+                    <div hidden id="about-book-full">
+                      {descriptionParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+                    </div>
+                    <button
+                      aria-controls="about-book-full"
+                      aria-expanded="false"
+                      class="description-toggle"
+                      data-full-id="about-book-full"
+                      data-preview-id="about-book-preview"
+                      type="button"
+                    >
+                      Show more
+                    </button>
+                  </>
+                )}
+              </section>
+            )}
+
+            {formats.length > 0 && (
+              <section aria-labelledby="formats-heading" class="formats">
+                <h2 id="formats-heading">Available formats</h2>
+                <ul>
+                  {formats.map((format) => <li>{format}</li>)}
+                </ul>
+              </section>
+            )}
+
+          </div>
+        </section>
+
+        <BuyBox book={book} showPreviewLink={hasPreview} />
+
+        {recommendations.length > 0 && (
+          <section aria-labelledby="recommendations-heading" class="recommendations">
+            <h2 id="recommendations-heading">You may also like</h2>
+            <ul>
+              {recommendations.map((recommendation) => (
+                <li>
+                  <a href={`/books/${recommendation.slug}`}>
+                    {recommendation.cover ? (
+                      <img
+                        alt={`Cover of ${recommendation.title}`}
+                        height={recommendation.cover.height}
+                        src={recommendation.cover.src}
+                        width={recommendation.cover.width}
+                      />
+                    ) : (
+                      <span class="recommendation-missing-cover">Cover unavailable</span>
+                    )}
+                    <span>{recommendation.title}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </>
+    )}
+  </main>
+</Layout>
+
+<script>
+  /** Toggles a book description between its preview and complete text. */
+  function toggleDescription(event: Event) {
+    const button = event.currentTarget as HTMLButtonElement;
+    const preview = document.getElementById(button.dataset.previewId ?? "");
+    const full = document.getElementById(button.dataset.fullId ?? "");
+    const isExpanded = button.getAttribute("aria-expanded") === "true";
+
+    if (!(preview && full)) {
+      return;
+    }
+
+    preview.hidden = !isExpanded;
+    full.hidden = isExpanded;
+    button.setAttribute("aria-expanded", String(!isExpanded));
+    button.textContent = isExpanded ? "Show more" : "Show less";
+  }
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    ".description-toggle"
+  )) {
+    button.addEventListener("click", toggleDescription);
+  }
+</script>
+
+<style lang="scss">
+  .book-page {
+    max-width: 64rem;
+    padding: 2rem;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--link);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+
+  .book-detail {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) minmax(0, 2fr);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .book-cover {
+    display: flex;
+    justify-content: center;
+
+    img,
+    .missing-cover {
+      width: 100%;
+      max-width: 20rem;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius);
+      box-shadow: 0 0.35rem 0.8rem color-mix(in srgb, var(--text) 18%, transparent);
+    }
+  }
+
+  .missing-cover,
+  .recommendation-missing-cover {
+    display: grid;
+    min-height: 16rem;
+    place-items: center;
+    padding: 1rem;
+    color: var(--text-muted);
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .book-information {
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 0.4rem;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.05;
+    }
+
+    h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+    }
+  }
+
+  .tagline {
+    color: var(--text-muted);
+  }
+
+  .rating {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+  }
+
+  .rating-stars {
+    color: var(--primary);
+    letter-spacing: 0.15rem;
+  }
+
+  .metadata {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0 0 2rem;
+    text-transform: capitalize;
+
+    div {
+      display: grid;
+      grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr);
+      gap: 1rem;
+    }
+
+    dt {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  .about-book,
+  .formats {
+    margin-top: 2rem;
+
+    p {
+      line-height: 1.6;
+      text-indent: 2rem;
+    }
+  }
+
+  .description-toggle {
+    padding: 0;
+    border: 0;
+    color: var(--link);
+    background: transparent;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .formats {
+    display: none;
+  }
+
+  .formats ul,
+  .recommendations ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .formats li {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+  }
+
+  .recommendations {
+    margin-top: 3rem;
+
+    h2 {
+      margin-bottom: 1.25rem;
+    }
+
+    li {
+      flex: 1 1 8rem;
+      max-width: 10rem;
+    }
+
+    a {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    img,
+    .recommendation-missing-cover {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 2 / 3;
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius);
+      object-fit: cover;
+    }
+
+    .recommendation-missing-cover {
+      min-height: 0;
+    }
+  }
+
+  @media (width < $media-small) {
+    .book-page {
+      padding: 1.5rem 1rem;
+    }
+
+    .book-detail {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .book-cover img,
+    .book-cover .missing-cover {
+      max-width: 16rem;
+    }
+
+    .book-information h1 {
+      text-align: center;
+    }
+
+    .tagline,
+    .rating {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .recommendations ul {
+      justify-content: center;
+    }
+  }
+
+  @media (width < $media-extra-small) {
+    .metadata div {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+
+    .recommendations li {
+      flex-basis: 6.5rem;
+    }
+  }
+</style>

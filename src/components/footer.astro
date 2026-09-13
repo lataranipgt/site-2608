@@ -1,0 +1,243 @@
+---
+/** Site-wide footer with decorative background, author branding, quick links, and social icons. */
+import footerBg from "../assets/abstract/footer-background-alt.png";
+import footerBgDark from "../assets/abstract/footer-background-dark-alt.png";
+import imageSocialFacebook from "../assets/abstract/social-facebook.png";
+import imageSocialGoodreads from "../assets/abstract/social-goodreads.png";
+import imageSocialInstagram from "../assets/abstract/social-instagram.png";
+import imageSocialLinkedin from "../assets/abstract/social-linkedin.png";
+import imageSocialYoutube from "../assets/abstract/social-youtube.png";
+import { data } from "../data.mjs";
+
+const { author } = data;
+const currentYear = new Date().getFullYear();
+
+const socials = [
+  {
+    image: imageSocialFacebook,
+    name: "Facebook",
+    url: author.contact.reach.socialUrls.facebook,
+  },
+  {
+    image: imageSocialInstagram,
+    name: "Instagram",
+    url: author.contact.reach.socialUrls.instagram,
+  },
+  {
+    image: imageSocialLinkedin,
+    name: "LinkedIn",
+    url: author.contact.reach.socialUrls.linkedin,
+  },
+  {
+    image: imageSocialYoutube,
+    name: "YouTube",
+    url: author.contact.reach.socialUrls.youtube,
+  },
+  {
+    image: imageSocialGoodreads,
+    name: "Goodreads",
+    url: author.contact.reach.socialUrls.goodreads,
+  },
+].filter(({ url }) => url);
+---
+
+<footer
+  class="footer"
+  style={`
+    --footer-bg: url(${footerBg.src});
+    --footer-bg-dark: url(${footerBgDark.src});
+  `}
+>
+  <div aria-hidden="true" class="footer-bg" />
+
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <p class="footer-name">{author.name}</p>
+      <p class="footer-tagline">{author.description.paragraph}</p>
+    </div>
+
+    <nav aria-label="Footer navigation" class="footer-nav">
+      <p class="footer-heading">Quick Links</p>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/books">Books</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-social">
+      <p class="footer-heading">{author.contact.reach.socialHeading}</p>
+      <ul>
+        {socials.map(({ image, name, url }) => (
+          <li>
+            <a href={url} rel="noopener noreferrer" target="_blank" title={name}>
+              <img alt={`Follow Lata Thakur on ${name}`} height="36" loading="lazy" src={image.src} width="36" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; {currentYear} {author.name}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style lang="scss">
+  .footer {
+    position: relative;
+    overflow: hidden;
+    margin-top: 3rem;
+    padding: 2.5rem 1rem 0;
+    color: var(--text);
+  }
+
+  .footer-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--footer-bg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom center;
+    opacity: 0.15;
+    @media (prefers-color-scheme: light) {
+      filter: brightness(120%);
+    }
+    @media (prefers-color-scheme: dark) {
+      background-image: var(--footer-bg-dark);
+      opacity: 0.15;
+    }
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+    max-width: $media-large;
+    margin: 0 auto;
+    padding-bottom: 1.5rem;
+  }
+
+  .footer-heading {
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  /** ---- Brand ---- */
+
+  .footer-brand {
+    flex: 1 1 16rem;
+    max-width: 24rem;
+  }
+
+  .footer-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-tagline {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  /** ---- Navigation ---- */
+
+  .footer-nav {
+    flex: 0 0 auto;
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    a {
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: color 0.15s;
+      &:hover {
+        color: var(--link);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  /** ---- Social ---- */
+
+  .footer-social {
+    flex: 0 0 auto;
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: var(--surface);
+      transition:
+        background 0.15s,
+        transform 0.15s;
+      &:hover {
+        background: var(--primary);
+        transform: scale(1.1);
+        img {
+          filter: brightness(0) invert(1);
+        }
+      }
+    }
+    img {
+      display: block;
+      width: 1.25rem;
+      height: 1.25rem;
+      transition: filter 0.15s;
+    }
+  }
+
+  /** ---- Bottom bar ---- */
+
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 0.825rem;
+    color: var(--text-muted);
+    max-width: $media-large;
+    margin: 0 auto;
+    p {
+      margin: 0;
+    }
+  }
+
+  /** ---- Responsive ---- */
+
+  @media (width < $media-small) {
+    .footer-inner {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .footer-brand {
+      max-width: 100%;
+    }
+    .footer-social ul {
+      justify-content: center;
+    }
+    .footer-nav ul {
+      align-items: center;
+    }
+  }
+</style>

@@ -1,0 +1,307 @@
+---
+/** Renders a static, client-paginated preview for books with scanned pages. */
+
+import BuyBox from "../../../components/buy-box.astro";
+import { data } from "../../../data.mjs";
+import Layout from "../../../layouts/layout.astro";
+import {
+  type BookPreviewPage,
+  getBookPreviewPages,
+} from "../../../utils/book-previews";
+
+type Book = (typeof data.books)[number];
+
+interface PreviewRouteProps {
+  book: Book;
+  pages: readonly BookPreviewPage[];
+}
+
+/** Generates static preview routes for valid books with discovered scans. */
+export function getStaticPaths() {
+  return data.books.flatMap((staticBook) => {
+    const { slug } = staticBook;
+
+    if (typeof slug !== "string" || !slug.trim()) {
+      return [];
+    }
+
+    const pages = getBookPreviewPages(slug);
+
+    if (pages.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        params: { slug },
+        props: { book: staticBook, pages },
+      },
+    ];
+  });
+}
+
+const { book, pages } = Astro.props as PreviewRouteProps;
+const pageSources = pages.map((page) => page.image.src);
+const pageCount = pages.length;
+---
+
+<Layout>
+  <main class="book-preview">
+    <a class="back-link" href={`/books/${book.slug}`}>← Back to {book.title}</a>
+
+    <h1>{book.title}</h1>
+
+    <div class="preview-stage" id="preview-stage">
+      <img
+        alt={`${book.title} preview page 1`}
+        class="preview-image"
+        data-book-title={book.title}
+        data-page-sources={JSON.stringify(pageSources)}
+        id="preview-image"
+        src={pages[0].image.src}
+      >
+      <button
+        aria-label="Previous page"
+        class="preview-side-button preview-side-button-previous"
+        data-page-offset="-1"
+        disabled
+        type="button"
+      >
+        <span aria-hidden="true" class="preview-side-button-icon">&lt;</span>
+      </button>
+      <button
+        aria-label="Next page"
+        class="preview-side-button preview-side-button-next"
+        data-page-offset="1"
+        type="button"
+      >
+        <span aria-hidden="true" class="preview-side-button-icon">&gt;</span>
+      </button>
+    </div>
+
+    <p aria-live="polite" id="preview-status">Page 1 of {pageCount}</p>
+
+    <nav aria-label="Preview page navigation" class="preview-navigation">
+      <button data-page-offset="-1" disabled id="previous-page" type="button">
+        Previous
+      </button>
+      <button data-page-offset="1" id="next-page" type="button">Next</button>
+    </nav>
+
+    <BuyBox book={book} heading="Buy this book" />
+  </main>
+</Layout>
+
+<script>
+  const previewImage =
+    document.querySelector<HTMLImageElement>("#preview-image");
+  const previewStatus = document.querySelector<HTMLElement>("#preview-status");
+  const previousButtons = document.querySelectorAll<HTMLButtonElement>(
+    "[data-page-offset='-1']"
+  );
+  const nextButtons = document.querySelectorAll<HTMLButtonElement>(
+    "[data-page-offset='1']"
+  );
+  const previewStage = document.querySelector<HTMLElement>("#preview-stage");
+
+  if (!(previewImage && previewStatus && previewStage)) {
+    throw new Error("Book preview controls are unavailable.");
+  }
+
+  const activePreviewImage = previewImage;
+  const activePreviewStatus = previewStatus;
+  const activePreviewStage = previewStage;
+  const pageSources = JSON.parse(
+    activePreviewImage.dataset.pageSources ?? "[]"
+  ) as string[];
+  const bookTitle = activePreviewImage.dataset.bookTitle ?? "Book";
+  const swipeThreshold = 48;
+  let currentPageIndex = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  /** Updates the preview image, count, and navigation availability. */
+  function updatePreview(): void {
+    const pageNumber = currentPageIndex + 1;
+
+    activePreviewImage.alt = `${bookTitle} preview page ${pageNumber}`;
+    activePreviewImage.src = pageSources[currentPageIndex];
+    activePreviewStatus.textContent = `Page ${pageNumber} of ${pageSources.length}`;
+    for (const previousButton of previousButtons) {
+      previousButton.disabled = currentPageIndex === 0;
+    }
+
+    for (const nextButton of nextButtons) {
+      nextButton.disabled = currentPageIndex === pageSources.length - 1;
+    }
+  }
+
+  /** Moves the preview by one page when the requested page exists. */
+  function movePreview(pageOffset: number): void {
+    const nextPageIndex = currentPageIndex + pageOffset;
+
+    if (nextPageIndex < 0 || nextPageIndex >= pageSources.length) {
+      return;
+    }
+
+    currentPageIndex = nextPageIndex;
+    updatePreview();
+  }
+
+  /** Moves the preview based on a side or bottom navigation button. */
+  function handlePageButtonClick(event: Event): void {
+    const button = event.currentTarget as HTMLButtonElement;
+    movePreview(Number(button.dataset.pageOffset));
+  }
+
+  /** Records the starting point of a potential horizontal swipe. */
+  function handleTouchStart(event: TouchEvent): void {
+    const [touch] = event.touches;
+
+    if (!touch) {
+      return;
+    }
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }
+
+  /** Moves the preview after a deliberate horizontal swipe. */
+  function handleTouchEnd(event: TouchEvent): void {
+    const [touch] = event.changedTouches;
+
+    if (!touch) {
+      return;
+    }
+
+    const horizontalDistance = touch.clientX - touchStartX;
+    const verticalDistance = touch.clientY - touchStartY;
+    const isHorizontalSwipe =
+      Math.abs(horizontalDistance) > Math.abs(verticalDistance);
+
+    if (!isHorizontalSwipe || Math.abs(horizontalDistance) < swipeThreshold) {
+      return;
+    }
+
+    movePreview(horizontalDistance < 0 ? 1 : -1);
+  }
+
+  for (const pageButton of [...previousButtons, ...nextButtons]) {
+    pageButton.addEventListener("click", handlePageButtonClick);
+  }
+
+  activePreviewStage.addEventListener("touchstart", handleTouchStart, {
+    passive: true,
+  });
+  activePreviewStage.addEventListener("touchend", handleTouchEnd, {
+    passive: true,
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      movePreview(-1);
+    }
+
+    if (event.key === "ArrowRight") {
+      movePreview(1);
+    }
+  });
+</script>
+
+<style lang="scss">
+  .book-preview {
+    max-width: 64rem;
+    padding: 2rem;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--link);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+
+  .preview-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    @media (prefers-color-scheme: dark) {
+      filter: invert(1);
+    }
+  }
+
+  .preview-stage {
+    position: relative;
+    margin: 1.5rem auto;
+  }
+
+  .preview-side-button {
+    position: absolute;
+    top: 0;
+    display: grid;
+    width: 50%;
+    height: 100%;
+    padding: 0 0.75rem;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &:disabled .preview-side-button-icon {
+      opacity: 0.35;
+    }
+
+    &:not(:disabled):hover .preview-side-button-icon,
+    &:not(:disabled):focus-visible .preview-side-button-icon {
+      background: var(--primary);
+      color: var(--background);
+    }
+  }
+
+  .preview-side-button-icon {
+    display: grid;
+    width: 3rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--background) 88%, transparent);
+    color: var(--text);
+    font-size: 2rem;
+    line-height: 1;
+    box-shadow: 0 0.2rem 0.75rem color-mix(in srgb, var(--text) 20%, transparent);
+  }
+
+  .preview-side-button-previous {
+    left: 0;
+    justify-items: start;
+  }
+
+  .preview-side-button-next {
+    right: 0;
+    justify-items: end;
+  }
+
+
+  .preview-navigation {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  @media (width < $media-small) {
+    .book-preview {
+      padding: 1.5rem 1rem;
+    }
+  }
+</style>
