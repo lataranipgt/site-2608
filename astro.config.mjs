@@ -1,4 +1,6 @@
 // @ts-check
+
+import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 // GitHub Pages deployment base path; set by the CI workflow via BASE env var.
@@ -8,6 +10,7 @@ const base = process.env.BASE || "/";
 // https://astro.build/config
 export default defineConfig({
   base,
+  integrations: [sitemap()],
   server: {
     host: "0.0.0.0",
     port: 6003,

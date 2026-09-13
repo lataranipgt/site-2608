@@ -82,6 +82,7 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <meta content={seo.description} name="twitter:description">
     <meta content="summary_large_image" name="twitter:card">
     <meta content={socialImageUrl} name="twitter:image">
+    <link href="/sitemap-index.xml" rel="sitemap">
     <title>{seo.title}</title>
     <script
       async
