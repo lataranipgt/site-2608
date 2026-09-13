@@ -45,6 +45,9 @@ const pageSources = pages.map((page) => page.image.src);
 const pageCount = pages.length;
 const seo = {
   description: `${book.description.replace(/\s+/g, " ").trim().slice(0, 240)} Preview pages from this ${book.language} ${book.genre} book by ${data.author.name}${book.isbn ? `, ISBN ${book.isbn}` : ""}${book.publisher ? `, published by ${book.publisher}` : ""}${book.publicationDate ? ` in ${book.publicationDate}` : ""}.`,
+  image: book.cover
+    ? new URL(book.cover.src, Astro.site ?? Astro.url).toString()
+    : undefined,
   title: `${book.title} Preview — ${data.author.name}`,
 };
 ---

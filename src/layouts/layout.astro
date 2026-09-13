@@ -15,6 +15,7 @@ import "../global.scss";
 
 interface SeoMetadata {
   description: string;
+  image?: string;
   ogType?: "article" | "book" | "website";
   title: string;
 }
@@ -27,9 +28,12 @@ const { pathname } = Astro.url;
 const siteTitle = data.author.name;
 const siteDescription = data.author.description.short;
 const googleAnalyticsId = data.googleAnalytics.measurementId;
-const socialImageUrl = new URL(imageProfilePic.src, Astro.site ?? Astro.url);
 const { seo = { description: siteDescription, title: siteTitle } } =
   Astro.props;
+const socialImageUrl = new URL(
+  seo.image ?? imageProfilePic.src,
+  Astro.site ?? Astro.url
+);
 const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 ---
 

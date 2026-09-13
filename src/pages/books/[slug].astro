@@ -59,6 +59,9 @@ const bookFacts = book
 const seo = book
   ? {
       description: `${description.replace(/\s+/g, " ").trim().slice(0, 240)} ${bookFacts}.`,
+      image: book.cover
+        ? new URL(book.cover.src, Astro.site ?? Astro.url).toString()
+        : undefined,
       ogType: "book" as const,
       title: `${book.title} by ${data.author.name} — ${book.genre}`,
     }
